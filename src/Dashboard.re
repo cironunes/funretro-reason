@@ -11,16 +11,34 @@ module Boards = [%graphql
 
 module BoardsQuery = ReasonApollo.CreateQuery(Boards);
 
+type state = {
+  isCreatingBoard: bool,
+};
+
+type action =
+  | ToggleNewBoardForm;
+
 let boardName = board => <div>board##name</div>;
 
 [@react.component]
-let make = () =>
+let make = () => {
+  let (state, dispatch) = React.useReducer((state, action) =>
+    switch(action) {
+    | ToggleNewBoardForm => {isCreatingBoard: !state.isCreatingBoard}
+    },
+    {isCreatingBoard: false},
+  );
   <BoardsQuery>
     ...{({result}) =>
       <div>
         <h1>{Util.ste("Dashboard")}</h1>
-        <button>{"New board" |> Util.ste}</button>
-        <NewBoard />
+        <button onClick={event => {
+          ReactEvent.Mouse.preventDefault(event);
+          dispatch(ToggleNewBoardForm);
+        }}>{"New board" |> Util.ste}</button>
+
+        {state.isCreatingBoard ? <NewBoard /> : React.null}
+
         {switch result {
         | Loading => "Loading" |> Util.ste
         | Error(error) => error##message |> Util.ste
@@ -46,3 +64,4 @@ let make = () =>
       </div>
     }
   </BoardsQuery>;
+};

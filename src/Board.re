@@ -3,6 +3,7 @@ module Board = [%graphql
     query Board($id: ID!) {
       board(id: $id) {
         name
+        maxVotes
         sections{
           name
           id
@@ -46,7 +47,8 @@ let make = (~id) => {
           | Some(board) =>
           <div>
             <h1>{board##name |> Util.ste}</h1>
-            <Sections sections={board##sections} />
+            <span>{"Max votes: " |> Util.ste} {board##maxVotes |> string_of_int |> Util.ste}</span>
+            <Sections sections={board##sections} boardId={id} />
           </div>
           }}
         </div>

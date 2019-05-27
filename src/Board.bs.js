@@ -10,7 +10,7 @@ var ReasonApollo = require("reason-apollo/src/ReasonApollo.bs.js");
 var Util$ReactHooksTemplate = require("./Util.bs.js");
 var Sections$ReactHooksTemplate = require("./Sections.bs.js");
 
-var ppx_printed_query = "query Board($id: ID!)  {\nboard(id: $id)  {\nname  \nsections  {\nname  \nid  \ncards  {\nid  \ntext  \nvotes  {\nfirstName  \n}\n\ncomments  {\nid  \ntext  \nauthor  {\nid  \nfirstName  \nlastName  \n}\n\n}\n\n}\n\n}\n\n}\n\n}\n";
+var ppx_printed_query = "query Board($id: ID!)  {\nboard(id: $id)  {\nname  \nmaxVotes  \nsections  {\nname  \nid  \ncards  {\nid  \ntext  \nvotes  {\nfirstName  \n}\n\ncomments  {\nid  \ntext  \nauthor  {\nid  \nfirstName  \nlastName  \n}\n\n}\n\n}\n\n}\n\n}\n\n}\n";
 
 function parse(value) {
   var match = Js_json.decodeObject(value);
@@ -36,16 +36,25 @@ function parse(value) {
           } else {
             tmp$2 = Js_exn.raiseError("graphql_ppx: Field name on type Board is missing");
           }
-          var match$6 = Js_dict.get(value$2, "sections");
+          var match$6 = Js_dict.get(value$2, "maxVotes");
           var tmp$3;
           if (match$6 !== undefined) {
             var value$4 = Caml_option.valFromOption(match$6);
-            var match$7 = Js_json.decodeNull(value$4);
-            if (match$7 !== undefined) {
-              tmp$3 = undefined;
+            var match$7 = Js_json.decodeNumber(value$4);
+            tmp$3 = match$7 !== undefined ? match$7 | 0 : Js_exn.raiseError("graphql_ppx: Expected int, got " + JSON.stringify(value$4));
+          } else {
+            tmp$3 = Js_exn.raiseError("graphql_ppx: Field maxVotes on type Board is missing");
+          }
+          var match$8 = Js_dict.get(value$2, "sections");
+          var tmp$4;
+          if (match$8 !== undefined) {
+            var value$5 = Caml_option.valFromOption(match$8);
+            var match$9 = Js_json.decodeNull(value$5);
+            if (match$9 !== undefined) {
+              tmp$4 = undefined;
             } else {
-              var match$8 = Js_json.decodeArray(value$4);
-              tmp$3 = match$8 !== undefined ? match$8.map((function (value) {
+              var match$10 = Js_json.decodeArray(value$5);
+              tmp$4 = match$10 !== undefined ? match$10.map((function (value) {
                         var match = Js_json.decodeNull(value);
                         if (match !== undefined) {
                           return undefined;
@@ -268,14 +277,15 @@ function parse(value) {
                           }
                           return Caml_option.some(tmp);
                         }
-                      })) : Js_exn.raiseError("graphql_ppx: Expected array, got " + JSON.stringify(value$4));
+                      })) : Js_exn.raiseError("graphql_ppx: Expected array, got " + JSON.stringify(value$5));
             }
           } else {
-            tmp$3 = undefined;
+            tmp$4 = undefined;
           }
           tmp$1 = {
             name: tmp$2,
-            sections: tmp$3
+            maxVotes: tmp$3,
+            sections: tmp$4
           };
         } else {
           tmp$1 = Js_exn.raiseError("graphql_ppx: Object is not a value");
@@ -352,8 +362,9 @@ function Board$1(Props) {
                     var tmp$1;
                     if (match !== undefined) {
                       var board = Caml_option.valFromOption(match);
-                      tmp$1 = React.createElement("div", undefined, React.createElement("h1", undefined, Util$ReactHooksTemplate.ste(board.name)), React.createElement(Sections$ReactHooksTemplate.make, {
-                                sections: board.sections
+                      tmp$1 = React.createElement("div", undefined, React.createElement("h1", undefined, Util$ReactHooksTemplate.ste(board.name)), React.createElement("span", undefined, Util$ReactHooksTemplate.ste("Max votes: "), Util$ReactHooksTemplate.ste(String(board.maxVotes))), React.createElement(Sections$ReactHooksTemplate.make, {
+                                sections: board.sections,
+                                boardId: id
                               }));
                     } else {
                       tmp$1 = Util$ReactHooksTemplate.ste("Not found");

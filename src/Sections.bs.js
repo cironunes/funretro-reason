@@ -2,20 +2,44 @@
 'use strict';
 
 var $$Array = require("bs-platform/lib/js/array.js");
+var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var Caml_option = require("bs-platform/lib/js/caml_option.js");
 var Util$ReactHooksTemplate = require("./Util.bs.js");
 var Cards$ReactHooksTemplate = require("./Cards.bs.js");
+var NewCard$ReactHooksTemplate = require("./NewCard.bs.js");
+var NewSection$ReactHooksTemplate = require("./NewSection.bs.js");
 
 function Sections(Props) {
   var sections = Props.sections;
+  var boardId = Props.boardId;
+  var match = React.useReducer((function (state, action) {
+          return /* record */[
+                  /* isCreatingNewSection */!state[/* isCreatingNewSection */0],
+                  /* sectionIdForNewCard */state[/* sectionIdForNewCard */1]
+                ];
+        }), /* record */[
+        /* isCreatingNewSection */false,
+        /* sectionIdForNewCard */""
+      ]);
   if (sections !== undefined) {
-    return React.createElement("div", undefined, $$Array.map((function (section) {
+    var dispatch = match[1];
+    var match$1 = match[0][/* isCreatingNewSection */0];
+    return React.createElement("div", undefined, React.createElement("button", {
+                    onClick: (function ($$event) {
+                        $$event.preventDefault();
+                        return Curry._1(dispatch, /* ToggleNewSectionForm */0);
+                      })
+                  }, Util$ReactHooksTemplate.ste("New section")), match$1 ? React.createElement(NewSection$ReactHooksTemplate.make, {
+                      boardId: boardId
+                    }) : null, $$Array.map((function (section) {
                       if (section !== undefined) {
                         var section$1 = Caml_option.valFromOption(section);
                         return React.createElement("div", {
                                     key: section$1.id
-                                  }, React.createElement("h2", undefined, Util$ReactHooksTemplate.ste(section$1.name)), React.createElement(Cards$ReactHooksTemplate.make, {
+                                  }, React.createElement("h2", undefined, Util$ReactHooksTemplate.ste(section$1.name)), React.createElement(NewCard$ReactHooksTemplate.make, {
+                                        sectionId: section$1.id
+                                      }), React.createElement(Cards$ReactHooksTemplate.make, {
                                         cards: section$1.cards
                                       }));
                       } else {

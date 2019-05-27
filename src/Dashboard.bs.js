@@ -2,6 +2,7 @@
 'use strict';
 
 var $$Array = require("bs-platform/lib/js/array.js");
+var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var Js_exn = require("bs-platform/lib/js/js_exn.js");
 var Js_dict = require("bs-platform/lib/js/js_dict.js");
@@ -116,15 +117,21 @@ function boardName(board) {
 }
 
 function Dashboard(Props) {
+  var match = React.useReducer((function (state, action) {
+          return /* record */[/* isCreatingBoard */!state[/* isCreatingBoard */0]];
+        }), /* record */[/* isCreatingBoard */false]);
+  var dispatch = match[1];
+  var state = match[0];
   return React.createElement(BoardsQuery[/* make */4], {
               children: (function (param) {
                   var result = param[/* result */0];
+                  var match = state[/* isCreatingBoard */0];
                   var tmp;
                   if (typeof result === "number") {
                     tmp = Util$ReactHooksTemplate.ste("Loading");
                   } else if (result.tag) {
-                    var match = result[0].boards;
-                    tmp = React.createElement("div", undefined, match !== undefined ? React.createElement("div", undefined, $$Array.map((function (board) {
+                    var match$1 = result[0].boards;
+                    tmp = React.createElement("div", undefined, match$1 !== undefined ? React.createElement("div", undefined, $$Array.map((function (board) {
                                       if (board !== undefined) {
                                         var board$1 = Caml_option.valFromOption(board);
                                         return React.createElement("div", {
@@ -135,11 +142,16 @@ function Dashboard(Props) {
                                       } else {
                                         return Util$ReactHooksTemplate.ste("");
                                       }
-                                    }), match)) : Util$ReactHooksTemplate.ste("Empty"));
+                                    }), match$1)) : Util$ReactHooksTemplate.ste("Empty"));
                   } else {
                     tmp = Util$ReactHooksTemplate.ste(result[0].message);
                   }
-                  return React.createElement("div", undefined, React.createElement("h1", undefined, Util$ReactHooksTemplate.ste("Dashboard")), React.createElement("button", undefined, Util$ReactHooksTemplate.ste("New board")), React.createElement(NewBoard$ReactHooksTemplate.make, { }), tmp);
+                  return React.createElement("div", undefined, React.createElement("h1", undefined, Util$ReactHooksTemplate.ste("Dashboard")), React.createElement("button", {
+                                  onClick: (function ($$event) {
+                                      $$event.preventDefault();
+                                      return Curry._1(dispatch, /* ToggleNewBoardForm */0);
+                                    })
+                                }, Util$ReactHooksTemplate.ste("New board")), match ? React.createElement(NewBoard$ReactHooksTemplate.make, { }) : null, tmp);
                 })
             });
 }

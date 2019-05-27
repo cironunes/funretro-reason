@@ -58,6 +58,7 @@ let make = () => {
               <input
                 type_="text"
                 placeholder="Name"
+                value={state.name}
                 onChange={
                   e => dispatch(Name(ReactEvent.Form.target(e)##value))
                 }
@@ -68,13 +69,12 @@ let make = () => {
               <input
                 type_="number"
                 placeholder="Max votes"
+                value={state.maxVotes}
                 onChange={
                   e => dispatch(MaxVotes(ReactEvent.Form.target(e)##value))
                 }
               />
             </div>
-            <div>{state.name |> Util.ste}</div>
-            <div>{state.maxVotes |> Util.ste}</div>
             <button type_="submit">{"Create board" |> Util.ste}</button>
           </form>
         </div>
